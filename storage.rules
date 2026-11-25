@@ -1,0 +1,32 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isVerifiedAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email == 'info@trdispatch.us';
+    }
+
+    function isAllowedComplianceDocument() {
+      return request.resource != null
+        && request.resource.size > 0
+        && request.resource.size <= 3 * 1024 * 1024
+        && request.resource.contentType.matches('^(application/pdf|image/png|image/jpeg|image/jpg)$');
+    }
+
+    // Carrier compliance documents: write-only for public onboarding packets,
+    // read/list/delete strictly restricted to verified administrators.
+    match /carrier_documents/{carrierId}/{fileName} {
+      allow create: if carrierId.matches('^car_[0-9]+_[0-9]+$')
+        && fileName.size() <= 180
+        && isAllowedComplianceDocument();
+      allow read, update, delete: if isVerifiedAdmin();
+    }
+
+    // Deny all other Storage paths by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

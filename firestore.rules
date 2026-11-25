@@ -1,0 +1,418 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ---------------------------------------------------------
+    // Global Hardened Helpers
+    // ---------------------------------------------------------
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && request.auth.token.email_verified == true
+        && (
+          request.auth.token.email == 'info@trdispatch.us'
+          || exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        );
+    }
+
+    function isValidSiteContent(data) {
+      return data.keys().hasAll([
+          'companyName', 'shortName', 'domain', 'email', 'phone',
+          'whatsappNumber', 'address', 'hours', 'slogan', 'footerText',
+          'logoUrl', 'welcomeLogoUrl', 'faviconUrl',
+          'heroHeadline', 'heroSubheadline', 'heroImage',
+          'heroPrimaryCtaLabel', 'heroPrimaryCtaPage',
+          'heroSecondaryCtaLabel', 'heroSecondaryCtaPage',
+          'welcomeHeadline', 'welcomeSlogan',
+          'operationsTitle', 'operationsDescription', 'operationsImage',
+          'ctaTitle', 'ctaSubtitle',
+          'colors', 'typography', 'seo', 'socialLinks', 'sections', 'navItems', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'companyName', 'shortName', 'domain', 'email', 'phone',
+          'whatsappNumber', 'address', 'hours', 'slogan', 'footerText',
+          'logoUrl', 'welcomeLogoUrl', 'faviconUrl',
+          'heroHeadline', 'heroSubheadline', 'heroImage',
+          'heroPrimaryCtaLabel', 'heroPrimaryCtaPage',
+          'heroSecondaryCtaLabel', 'heroSecondaryCtaPage',
+          'welcomeHeadline', 'welcomeSlogan',
+          'operationsTitle', 'operationsDescription', 'operationsImage',
+          'ctaTitle', 'ctaSubtitle',
+          'colors', 'typography', 'seo', 'socialLinks', 'sections', 'navItems', 'updatedAt'
+        ])
+        && data.companyName is string && data.companyName.size() <= 120
+        && data.shortName is string && data.shortName.size() <= 80
+        && data.domain is string && data.domain.size() <= 100
+        && data.email is string && data.email.size() <= 120
+        && data.phone is string && data.phone.size() <= 40
+        && data.whatsappNumber is string && data.whatsappNumber.size() <= 30
+        && data.address is string && data.address.size() <= 240
+        && data.hours is string && data.hours.size() <= 200
+        && data.slogan is string && data.slogan.size() <= 140
+        && data.footerText is string && data.footerText.size() <= 400
+        && data.logoUrl is string && data.logoUrl.size() <= 500
+        && data.welcomeLogoUrl is string && data.welcomeLogoUrl.size() <= 500
+        && data.faviconUrl is string && data.faviconUrl.size() <= 500
+        && data.heroHeadline is string && data.heroHeadline.size() <= 180
+        && data.heroSubheadline is string && data.heroSubheadline.size() <= 600
+        && data.heroImage is string && data.heroImage.size() <= 500
+        && data.heroPrimaryCtaLabel is string && data.heroPrimaryCtaLabel.size() <= 60
+        && data.heroPrimaryCtaPage is string && data.heroPrimaryCtaPage.size() <= 30
+        && data.heroSecondaryCtaLabel is string && data.heroSecondaryCtaLabel.size() <= 60
+        && data.heroSecondaryCtaPage is string && data.heroSecondaryCtaPage.size() <= 30
+        && data.welcomeHeadline is string && data.welcomeHeadline.size() <= 120
+        && data.welcomeSlogan is string && data.welcomeSlogan.size() <= 160
+        && data.operationsTitle is string && data.operationsTitle.size() <= 180
+        && data.operationsDescription is string && data.operationsDescription.size() <= 600
+        && data.operationsImage is string && data.operationsImage.size() <= 500
+        && data.ctaTitle is string && data.ctaTitle.size() <= 180
+        && data.ctaSubtitle is string && data.ctaSubtitle.size() <= 400
+        && data.colors is map
+        && data.typography is map
+        && data.seo is map
+        && data.socialLinks is map
+        && data.sections is map
+        && data.navItems is list && data.navItems.size() <= 10;
+    }
+
+    function isValidService(data) {
+      return data.keys().hasAll([
+          'id', 'number', 'slug', 'equipment', 'title', 'summary',
+          'targetRpm', 'avgWeeklyGross', 'deliverables', 'image', 'imageAlt',
+          'displayOrder', 'enabled', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'id', 'number', 'slug', 'equipment', 'title', 'summary',
+          'targetRpm', 'avgWeeklyGross', 'deliverables', 'image', 'imageAlt',
+          'displayOrder', 'enabled', 'updatedAt'
+        ])
+        && data.id is string && data.id.size() <= 80
+        && data.number is string && data.number.size() <= 10
+        && data.slug is string && data.slug.size() <= 60
+        && data.equipment is string && data.equipment.size() <= 50
+        && data.title is string && data.title.size() <= 120
+        && data.summary is string && data.summary.size() <= 600
+        && data.targetRpm is string && data.targetRpm.size() <= 60
+        && data.avgWeeklyGross is string && data.avgWeeklyGross.size() <= 60
+        && data.deliverables is list && data.deliverables.size() <= 10
+        && data.image is string && data.image.size() <= 500
+        && data.imageAlt is string && data.imageAlt.size() <= 200
+        && data.displayOrder is number
+        && data.enabled is bool;
+    }
+
+    function isValidPricingPlan(data) {
+      return data.keys().hasAll([
+          'id', 'name', 'audience', 'rateLabel', 'rateSubtext',
+          'truckRange', 'highlighted', 'description', 'ctaLabel',
+          'displayOrder', 'limits', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'id', 'name', 'audience', 'rateLabel', 'rateSubtext',
+          'truckRange', 'highlighted', 'description', 'ctaLabel',
+          'displayOrder', 'limits', 'updatedAt'
+        ])
+        && data.id is string && data.id.size() <= 80
+        && data.name is string && data.name.size() <= 100
+        && data.audience is string && data.audience.size() <= 140
+        && data.rateLabel is string && data.rateLabel.size() <= 40
+        && data.rateSubtext is string && data.rateSubtext.size() <= 140
+        && data.truckRange is string && data.truckRange.size() <= 60
+        && data.highlighted is bool
+        && data.description is string && data.description.size() <= 500
+        && data.ctaLabel is string && data.ctaLabel.size() <= 60
+        && data.displayOrder is number
+        && data.limits is list && data.limits.size() <= 12;
+    }
+
+    function isValidTestimonial(data) {
+      return data.keys().hasAll([
+          'id', 'driverName', 'role', 'company', 'mcNumber',
+          'equipment', 'homeBase', 'beforeMetric', 'afterMetric',
+          'outcomeSummary', 'quote', 'photoUrl', 'permissionGranted',
+          'displayOrder', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'id', 'driverName', 'role', 'company', 'mcNumber',
+          'equipment', 'homeBase', 'beforeMetric', 'afterMetric',
+          'outcomeSummary', 'quote', 'photoUrl', 'permissionGranted',
+          'displayOrder', 'updatedAt'
+        ])
+        && data.id is string && data.id.size() <= 80
+        && data.driverName is string && data.driverName.size() <= 100
+        && data.role is string && data.role.size() <= 100
+        && data.company is string && data.company.size() <= 140
+        && data.mcNumber is string && data.mcNumber.size() <= 40
+        && data.equipment is string && data.equipment.size() <= 50
+        && data.homeBase is string && data.homeBase.size() <= 100
+        && data.beforeMetric is string && data.beforeMetric.size() <= 80
+        && data.afterMetric is string && data.afterMetric.size() <= 80
+        && data.outcomeSummary is string && data.outcomeSummary.size() <= 200
+        && data.quote is string && data.quote.size() <= 1000
+        && data.photoUrl is string && data.photoUrl.size() <= 500
+        && data.permissionGranted is bool
+        && data.displayOrder is number;
+    }
+
+    function isValidMediaAsset(data) {
+      return data.keys().hasAll(['id', 'label', 'category', 'fileName', 'mimeType', 'url', 'sizeLabel', 'createdAt'])
+        && data.keys().hasOnly(['id', 'label', 'category', 'fileName', 'mimeType', 'url', 'sizeLabel', 'createdAt'])
+        && data.id is string && data.id.size() <= 80
+        && data.label is string && data.label.size() <= 120
+        && data.category in ['logo', 'favicon', 'hero', 'service', 'background', 'testimonial', 'seo']
+        && data.fileName is string && data.fileName.size() <= 180
+        && data.mimeType is string && data.mimeType.size() <= 80
+        && data.url is string && data.url.size() <= 500
+        && data.sizeLabel is string && data.sizeLabel.size() <= 40;
+    }
+
+    function isValidCarrierLookup(lookup) {
+      return lookup is map
+        && lookup.keys().hasAll([
+          'performed', 'lookupStatus', 'source', 'sourceUpdatedAt', 'timestamp',
+          'dbaName', 'operatingStatus', 'authorityInfo', 'safetyInfo', 'insuranceInfo',
+          'fleetInfo', 'usdotNumber', 'legalName', 'physicalAddress', 'mailingAddress'
+        ])
+        && lookup.keys().hasOnly([
+          'performed', 'lookupStatus', 'source', 'sourceUpdatedAt', 'timestamp',
+          'dbaName', 'operatingStatus', 'authorityInfo', 'safetyInfo', 'insuranceInfo',
+          'fleetInfo', 'usdotNumber', 'legalName', 'physicalAddress', 'mailingAddress'
+        ])
+        && lookup.performed is bool
+        && lookup.lookupStatus in ['verified', 'manual', 'not_found', 'not_run']
+        && lookup.source is string && lookup.source.size() <= 240
+        && lookup.sourceUpdatedAt is string && lookup.sourceUpdatedAt.size() <= 64
+        && lookup.timestamp is string && lookup.timestamp.size() <= 64
+        && lookup.dbaName is string && lookup.dbaName.size() <= 160
+        && lookup.operatingStatus is string && lookup.operatingStatus.size() <= 160
+        && lookup.authorityInfo is string && lookup.authorityInfo.size() <= 500
+        && lookup.safetyInfo is string && lookup.safetyInfo.size() <= 400
+        && lookup.insuranceInfo is string && lookup.insuranceInfo.size() <= 500
+        && lookup.fleetInfo is string && lookup.fleetInfo.size() <= 160
+        && lookup.usdotNumber is string && lookup.usdotNumber.size() <= 40
+        && lookup.legalName is string && lookup.legalName.size() <= 160
+        && lookup.physicalAddress is string && lookup.physicalAddress.size() <= 240
+        && lookup.mailingAddress is string && lookup.mailingAddress.size() <= 240;
+    }
+
+    function isValidCarrierCreate(data) {
+      return data.keys().hasAll([
+          'id', 'referenceCode', 'companyName', 'ownerName', 'email',
+          'phone', 'mcNumber', 'dotNumber', 'physicalAddress', 'mailingAddress',
+          'carrierLookup', 'equipmentType', 'truckCount',
+          'operatingRegions', 'factoringCompany', 'insuranceActive',
+          'selectedPlan', 'notes', 'documents', 'status', 'submittedAt'
+        ])
+        && data.keys().hasOnly([
+          'id', 'referenceCode', 'companyName', 'ownerName', 'email',
+          'phone', 'mcNumber', 'dotNumber', 'physicalAddress', 'mailingAddress',
+          'carrierLookup', 'equipmentType', 'truckCount',
+          'operatingRegions', 'factoringCompany', 'insuranceActive',
+          'selectedPlan', 'notes', 'documents', 'status', 'submittedAt'
+        ])
+        && data.id is string && data.id.size() <= 80
+        && data.referenceCode is string && data.referenceCode.size() >= 3 && data.referenceCode.size() <= 30
+        && data.companyName is string && data.companyName.size() >= 2 && data.companyName.size() <= 160
+        && data.ownerName is string && data.ownerName.size() >= 2 && data.ownerName.size() <= 120
+        && data.email is string && data.email.size() >= 5 && data.email.size() <= 140
+        && data.phone is string && data.phone.size() >= 5 && data.phone.size() <= 40
+        && data.mcNumber is string && data.mcNumber.size() >= 3 && data.mcNumber.size() <= 40
+        && data.dotNumber is string && data.dotNumber.size() >= 3 && data.dotNumber.size() <= 40
+        && data.physicalAddress is string && data.physicalAddress.size() <= 240
+        && data.mailingAddress is string && data.mailingAddress.size() <= 240
+        && isValidCarrierLookup(data.carrierLookup)
+        && data.equipmentType is string && data.equipmentType.size() <= 50
+        && data.truckCount is number && data.truckCount >= 1 && data.truckCount <= 500
+        && data.operatingRegions is list && data.operatingRegions.size() >= 1 && data.operatingRegions.size() <= 10
+        && data.operatingRegions[0] is string
+        && data.factoringCompany is string && data.factoringCompany.size() <= 120
+        && data.insuranceActive is bool
+        && data.selectedPlan is string && data.selectedPlan.size() <= 120
+        && data.notes is string && data.notes.size() <= 1000
+        && data.documents is list && data.documents.size() <= 6
+        && data.status == 'Pending Review'
+        && data.submittedAt == request.time;
+    }
+
+    function isValidCarrierAdminUpdate(data) {
+      return data.keys().hasAll([
+          'id', 'referenceCode', 'companyName', 'ownerName', 'email',
+          'phone', 'mcNumber', 'dotNumber', 'equipmentType', 'truckCount',
+          'operatingRegions', 'factoringCompany', 'insuranceActive',
+          'selectedPlan', 'notes', 'documents', 'status', 'submittedAt'
+        ])
+        && data.keys().hasOnly([
+          'id', 'referenceCode', 'companyName', 'ownerName', 'email',
+          'phone', 'mcNumber', 'dotNumber', 'physicalAddress', 'mailingAddress',
+          'carrierLookup', 'equipmentType', 'truckCount',
+          'operatingRegions', 'factoringCompany', 'insuranceActive',
+          'selectedPlan', 'notes', 'documents', 'status', 'submittedAt'
+        ])
+        && (!('physicalAddress' in data) || (data.physicalAddress is string && data.physicalAddress.size() <= 240))
+        && (!('mailingAddress' in data) || (data.mailingAddress is string && data.mailingAddress.size() <= 240))
+        && (!('carrierLookup' in data) || data.carrierLookup == existing().carrierLookup || isValidCarrierLookup(data.carrierLookup))
+        && data.status in ['Pending Review', 'Onboarding', 'Approved', 'Declined']
+        && data.submittedAt == existing().submittedAt;
+    }
+
+    function isValidInquiryCreate(data) {
+      return data.keys().hasAll(['id', 'name', 'email', 'phone', 'subject', 'message', 'status', 'createdAt'])
+        && data.keys().hasOnly(['id', 'name', 'email', 'phone', 'subject', 'message', 'status', 'createdAt'])
+        && data.id is string && data.id.size() <= 80
+        && data.name is string && data.name.size() >= 2 && data.name.size() <= 120
+        && data.email is string && data.email.size() >= 5 && data.email.size() <= 140
+        && data.phone is string && data.phone.size() <= 40
+        && data.subject is string && data.subject.size() >= 2 && data.subject.size() <= 160
+        && data.message is string && data.message.size() >= 5 && data.message.size() <= 2000
+        && data.status == 'Open'
+        && data.createdAt == request.time;
+    }
+
+    function isValidInquiryAdminUpdate(data) {
+      return data.keys().hasAll(['id', 'name', 'email', 'phone', 'subject', 'message', 'status', 'createdAt'])
+        && data.keys().hasOnly(['id', 'name', 'email', 'phone', 'subject', 'message', 'status', 'createdAt'])
+        && data.status in ['Open', 'Read', 'Replied', 'Resolved']
+        && data.createdAt == existing().createdAt;
+    }
+
+    function isValidLoad(data) {
+      return data.keys().hasAll([
+          'id', 'loadNumber', 'carrierName', 'mcNumber', 'origin',
+          'destination', 'equipmentType', 'miles', 'grossPay', 'rpm',
+          'brokerName', 'pickupDate', 'status'
+        ])
+        && data.keys().hasOnly([
+          'id', 'loadNumber', 'carrierName', 'mcNumber', 'origin',
+          'destination', 'equipmentType', 'miles', 'grossPay', 'rpm',
+          'brokerName', 'pickupDate', 'status'
+        ])
+        && data.id is string && data.id.size() <= 80
+        && data.loadNumber is string && data.loadNumber.size() <= 40
+        && data.carrierName is string && data.carrierName.size() <= 160
+        && data.mcNumber is string && data.mcNumber.size() <= 40
+        && data.origin is string && data.origin.size() <= 120
+        && data.destination is string && data.destination.size() <= 120
+        && data.equipmentType is string && data.equipmentType.size() <= 50
+        && data.miles is number && data.miles > 0
+        && data.grossPay is number && data.grossPay > 0
+        && data.rpm is number && data.rpm > 0
+        && data.brokerName is string && data.brokerName.size() <= 120
+        && data.pickupDate is string && data.pickupDate.size() <= 30
+        && data.status in ['Booked', 'Dispatched', 'In Transit', 'Delivered'];
+    }
+
+    // ---------------------------------------------------------
+    // Connection test doc
+    // ---------------------------------------------------------
+    match /test/connection {
+      allow get: if true;
+    }
+
+    // ---------------------------------------------------------
+    // Admin registry
+    // ---------------------------------------------------------
+    match /admins/{uid} {
+      allow get: if isSignedIn() && request.auth.uid == uid;
+      allow list, write: if false;
+    }
+
+    // ---------------------------------------------------------
+    // CMS Site Content (Published vs Draft)
+    // ---------------------------------------------------------
+    match /site_content/{docId} {
+      allow get: if (docId == 'published') || (docId == 'draft' && isAdmin());
+      allow list: if isAdmin();
+      allow create, update: if isValidId(docId)
+        && (docId == 'published' || docId == 'draft')
+        && isAdmin()
+        && isValidSiteContent(incoming());
+      allow delete: if false;
+    }
+
+    // ---------------------------------------------------------
+    // Services Collection
+    // ---------------------------------------------------------
+    match /services/{serviceId} {
+      allow get: if isValidId(serviceId) && (existing().enabled == true || isAdmin());
+      allow list: if isAdmin() || existing().enabled == true;
+      allow create, update: if isValidId(serviceId) && isAdmin() && isValidService(incoming());
+      allow delete: if isValidId(serviceId) && isAdmin();
+    }
+
+    // ---------------------------------------------------------
+    // Pricing Plans Collection
+    // ---------------------------------------------------------
+    match /pricing_plans/{planId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(planId) && isAdmin() && isValidPricingPlan(incoming());
+      allow delete: if isValidId(planId) && isAdmin();
+    }
+
+    // ---------------------------------------------------------
+    // Testimonials Collection
+    // ---------------------------------------------------------
+    match /testimonials/{testimonialId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(testimonialId) && isAdmin() && isValidTestimonial(incoming());
+      allow delete: if isValidId(testimonialId) && isAdmin();
+    }
+
+    // ---------------------------------------------------------
+    // Media Assets Library
+    // ---------------------------------------------------------
+    match /media_assets/{assetId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(assetId) && isAdmin() && isValidMediaAsset(incoming());
+      allow delete: if isValidId(assetId) && isAdmin();
+    }
+
+    // ---------------------------------------------------------
+    // Carriers Collection (PII Isolated to Admin; Public Create Only)
+    // ---------------------------------------------------------
+    match /carriers/{carrierId} {
+      allow get, list: if isAdmin();
+      allow create: if isValidId(carrierId) && isValidCarrierCreate(incoming());
+      allow update: if isValidId(carrierId) && isAdmin() && isValidCarrierAdminUpdate(incoming());
+      allow delete: if isValidId(carrierId) && isAdmin();
+    }
+
+    // ---------------------------------------------------------
+    // Contact Inquiries Collection (PII Isolated to Admin; Public Create Only)
+    // ---------------------------------------------------------
+    match /inquiries/{inquiryId} {
+      allow get, list: if isAdmin();
+      allow create: if isValidId(inquiryId) && isValidInquiryCreate(incoming());
+      allow update: if isValidId(inquiryId) && isAdmin() && isValidInquiryAdminUpdate(incoming());
+      allow delete: if isValidId(inquiryId) && isAdmin();
+    }
+
+    // ---------------------------------------------------------
+    // Active Dispatch Loads (Admin Only)
+    // ---------------------------------------------------------
+    match /loads/{loadId} {
+      allow get, list: if isAdmin();
+      allow create, update: if isValidId(loadId) && isAdmin() && isValidLoad(incoming());
+      allow delete: if isValidId(loadId) && isAdmin();
+    }
+  }
+}

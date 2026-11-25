@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+:root {
+  --trd-dark: #050F1C;
+  --trd-navy: #081B32;
+  --trd-red: #D52B35;
+  --trd-white: #FFFFFF;
+  --trd-silver: #AEBBC9;
+  --font-display: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@theme {
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --color-trd-dark: var(--trd-dark);
+  --color-trd-navy: var(--trd-navy);
+  --color-trd-red: var(--trd-red);
+  --color-trd-red-hover: #B81F28;
+  --color-trd-silver: var(--trd-silver);
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    color: var(--trd-navy);
+    background-color: var(--trd-white);
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@keyframes trd-road-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes trd-truck-drive {
+  0% {
+    transform: translateX(-115%) translateY(0);
+    opacity: 0.4;
+  }
+  20% {
+    opacity: 1;
+  }
+  68% {
+    transform: translateX(0%) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(3%) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes trd-wheel-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes trd-cab-idle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.25px);
+  }
+}
+
+@keyframes trd-light-trail {
+  0% {
+    opacity: 0.45;
+    transform: scaleX(0.85);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scaleX(1.05);
+  }
+  100% {
+    opacity: 0.45;
+    transform: scaleX(0.85);
+  }
+}
+
+.animate-road-scroll {
+  animation: trd-road-scroll 0.85s linear infinite;
+}
+
+.animate-truck-drive {
+  animation: trd-truck-drive 1.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-wheel-spin {
+  animation: trd-wheel-spin 0.42s linear infinite;
+}
+
+.animate-cab-idle {
+  animation: trd-cab-idle 0.7s ease-in-out infinite;
+}
+
+.animate-light-trail {
+  transform-origin: right center;
+  animation: trd-light-trail 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-road-scroll,
+  .animate-truck-drive,
+  .animate-wheel-spin,
+  .animate-cab-idle,
+  .animate-light-trail {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

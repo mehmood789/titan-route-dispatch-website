@@ -1,0 +1,6 @@
+{
+  "name": "Titan Route Dispatch",
+  "description": "24/7 independent freight dispatch, rate negotiation, broker packet setup, and fleet load management for American owner-operators and trucking carriers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

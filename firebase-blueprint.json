@@ -1,0 +1,233 @@
+{
+  "entities": {
+    "SiteContent": {
+      "title": "SiteContent",
+      "description": "Published or draft CMS configuration for Titan Route Dispatch LLC including branding, logo URLs, homepage copy, design colors, typography, navigation, and SEO metadata.",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string", "maxLength": 120 },
+        "shortName": { "type": "string", "maxLength": 80 },
+        "domain": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 40 },
+        "whatsappNumber": { "type": "string", "maxLength": 30 },
+        "address": { "type": "string", "maxLength": 240 },
+        "hours": { "type": "string", "maxLength": 200 },
+        "slogan": { "type": "string", "maxLength": 140 },
+        "footerText": { "type": "string", "maxLength": 400 },
+        "logoUrl": { "type": "string", "maxLength": 500 },
+        "welcomeLogoUrl": { "type": "string", "maxLength": 500 },
+        "faviconUrl": { "type": "string", "maxLength": 500 },
+        "heroHeadline": { "type": "string", "maxLength": 180 },
+        "heroSubheadline": { "type": "string", "maxLength": 600 },
+        "heroImage": { "type": "string", "maxLength": 500 },
+        "heroPrimaryCtaLabel": { "type": "string", "maxLength": 60 },
+        "heroPrimaryCtaPage": { "type": "string", "maxLength": 30 },
+        "heroSecondaryCtaLabel": { "type": "string", "maxLength": 60 },
+        "heroSecondaryCtaPage": { "type": "string", "maxLength": 30 },
+        "welcomeHeadline": { "type": "string", "maxLength": 120 },
+        "welcomeSlogan": { "type": "string", "maxLength": 160 },
+        "operationsTitle": { "type": "string", "maxLength": 180 },
+        "operationsDescription": { "type": "string", "maxLength": 600 },
+        "operationsImage": { "type": "string", "maxLength": 500 },
+        "ctaTitle": { "type": "string", "maxLength": 180 },
+        "ctaSubtitle": { "type": "string", "maxLength": 400 },
+        "colors": { "type": "object" },
+        "typography": { "type": "object" },
+        "seo": { "type": "object" },
+        "socialLinks": { "type": "object" },
+        "sections": { "type": "object" },
+        "navItems": { "type": "array" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["companyName", "domain", "email", "logoUrl", "heroHeadline"]
+    },
+    "ServiceOffering": {
+      "title": "ServiceOffering",
+      "description": "Individual freight dispatch service card with equipment type, RPM targets, deliverables, image, ordering, and visibility toggle.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 80, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "number": { "type": "string", "maxLength": 10 },
+        "slug": { "type": "string", "maxLength": 60 },
+        "equipment": { "type": "string", "maxLength": 50 },
+        "title": { "type": "string", "maxLength": 120 },
+        "summary": { "type": "string", "maxLength": 600 },
+        "targetRpm": { "type": "string", "maxLength": 60 },
+        "avgWeeklyGross": { "type": "string", "maxLength": 60 },
+        "deliverables": { "type": "array" },
+        "image": { "type": "string", "maxLength": 500 },
+        "imageAlt": { "type": "string", "maxLength": 200 },
+        "displayOrder": { "type": "number" },
+        "enabled": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "equipment", "title", "summary", "displayOrder", "enabled"]
+    },
+    "PricingPlan": {
+      "title": "PricingPlan",
+      "description": "Editable dispatch pricing tier displayed on Pricing and Carrier Registration pages.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 80, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "maxLength": 100 },
+        "audience": { "type": "string", "maxLength": 140 },
+        "rateLabel": { "type": "string", "maxLength": 40 },
+        "rateSubtext": { "type": "string", "maxLength": 140 },
+        "truckRange": { "type": "string", "maxLength": 60 },
+        "highlighted": { "type": "boolean" },
+        "description": { "type": "string", "maxLength": 500 },
+        "ctaLabel": { "type": "string", "maxLength": 60 },
+        "displayOrder": { "type": "number" },
+        "limits": { "type": "array" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "rateLabel", "description", "displayOrder"]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "Verified carrier testimonial with optional driver/truck photo and before/after metrics.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 80, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "driverName": { "type": "string", "maxLength": 100 },
+        "role": { "type": "string", "maxLength": 100 },
+        "company": { "type": "string", "maxLength": 140 },
+        "mcNumber": { "type": "string", "maxLength": 40 },
+        "equipment": { "type": "string", "maxLength": 50 },
+        "homeBase": { "type": "string", "maxLength": 100 },
+        "beforeMetric": { "type": "string", "maxLength": 80 },
+        "afterMetric": { "type": "string", "maxLength": 80 },
+        "outcomeSummary": { "type": "string", "maxLength": 200 },
+        "quote": { "type": "string", "maxLength": 1000 },
+        "photoUrl": { "type": "string", "maxLength": 500 },
+        "permissionGranted": { "type": "boolean" },
+        "displayOrder": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "driverName", "company", "quote"]
+    },
+    "MediaAsset": {
+      "title": "MediaAsset",
+      "description": "Uploaded image asset metadata for logos, favicons, hero photos, service cards, and testimonials.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 80, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "label": { "type": "string", "maxLength": 120 },
+        "category": { "type": "string", "enum": ["logo", "favicon", "hero", "service", "background", "testimonial", "seo"] },
+        "fileName": { "type": "string", "maxLength": 180 },
+        "mimeType": { "type": "string", "maxLength": 80 },
+        "url": { "type": "string", "maxLength": 500 },
+        "sizeLabel": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "label", "category", "url"]
+    },
+    "CarrierRegistration": {
+      "title": "CarrierRegistration",
+      "description": "Carrier authority onboarding submission with PII and private uploaded compliance document references.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 80, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "referenceCode": { "type": "string", "maxLength": 30 },
+        "companyName": { "type": "string", "maxLength": 160 },
+        "ownerName": { "type": "string", "maxLength": 120 },
+        "email": { "type": "string", "maxLength": 140 },
+        "phone": { "type": "string", "maxLength": 40 },
+        "mcNumber": { "type": "string", "maxLength": 40 },
+        "dotNumber": { "type": "string", "maxLength": 40 },
+        "equipmentType": { "type": "string", "maxLength": 50 },
+        "truckCount": { "type": "number" },
+        "operatingRegions": { "type": "array" },
+        "factoringCompany": { "type": "string", "maxLength": 120 },
+        "insuranceActive": { "type": "boolean" },
+        "selectedPlan": { "type": "string", "maxLength": 120 },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "physicalAddress": { "type": "string", "maxLength": 240 },
+        "mailingAddress": { "type": "string", "maxLength": 240 },
+        "carrierLookup": {
+          "type": "object",
+          "description": "Retrieved O Trucking public API carrier metadata (DBA, operating status, operating authority, safety, insurance, fleet/drivers, source update date, lookup timestamp, and attributed source)."
+        },
+        "documents": {
+          "type": "array",
+          "description": "Private compliance document metadata including Firebase Storage paths or private vault IDs."
+        },
+        "status": { "type": "string", "enum": ["Pending Review", "Onboarding", "Approved", "Declined"] },
+        "submittedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "referenceCode", "companyName", "ownerName", "email", "phone", "mcNumber", "dotNumber", "status", "submittedAt"]
+    },
+    "ContactInquiry": {
+      "title": "ContactInquiry",
+      "description": "Contact form message submitted by prospective or active carriers.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 80, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "maxLength": 120 },
+        "email": { "type": "string", "maxLength": 140 },
+        "phone": { "type": "string", "maxLength": 40 },
+        "subject": { "type": "string", "maxLength": 160 },
+        "message": { "type": "string", "maxLength": 2000 },
+        "status": { "type": "string", "enum": ["Open", "Read", "Replied", "Resolved"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "email", "subject", "message", "status", "createdAt"]
+    },
+    "DispatchLoad": {
+      "title": "DispatchLoad",
+      "description": "Active or completed dispatch freight load tracked in Admin Operations.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 80, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "loadNumber": { "type": "string", "maxLength": 40 },
+        "carrierName": { "type": "string", "maxLength": 160 },
+        "mcNumber": { "type": "string", "maxLength": 40 },
+        "origin": { "type": "string", "maxLength": 120 },
+        "destination": { "type": "string", "maxLength": 120 },
+        "equipmentType": { "type": "string", "maxLength": 50 },
+        "miles": { "type": "number" },
+        "grossPay": { "type": "number" },
+        "rpm": { "type": "number" },
+        "brokerName": { "type": "string", "maxLength": 120 },
+        "pickupDate": { "type": "string", "maxLength": 30 },
+        "status": { "type": "string", "enum": ["Booked", "Dispatched", "In Transit", "Delivered"] }
+      },
+      "required": ["id", "loadNumber", "carrierName", "origin", "destination", "miles", "grossPay", "status"]
+    }
+  },
+  "firestore": {
+    "/site_content/{docId}": {
+      "schema": { "$ref": "#/entities/SiteContent" },
+      "description": "Published (docId='published') and draft (docId='draft') CMS configuration."
+    },
+    "/services/{serviceId}": {
+      "schema": { "$ref": "#/entities/ServiceOffering" },
+      "description": "Dynamic dispatch service cards displayed on Home and Services pages."
+    },
+    "/pricing_plans/{planId}": {
+      "schema": { "$ref": "#/entities/PricingPlan" },
+      "description": "Editable dispatch pricing tiers."
+    },
+    "/testimonials/{testimonialId}": {
+      "schema": { "$ref": "#/entities/Testimonial" },
+      "description": "Verified carrier testimonials."
+    },
+    "/media_assets/{assetId}": {
+      "schema": { "$ref": "#/entities/MediaAsset" },
+      "description": "Uploaded image library metadata."
+    },
+    "/carriers/{carrierId}": {
+      "schema": { "$ref": "#/entities/CarrierRegistration" },
+      "description": "Private carrier onboarding applications and compliance document references."
+    },
+    "/inquiries/{inquiryId}": {
+      "schema": { "$ref": "#/entities/ContactInquiry" },
+      "description": "Private contact inquiry submissions."
+    },
+    "/loads/{loadId}": {
+      "schema": { "$ref": "#/entities/DispatchLoad" },
+      "description": "Admin-managed active dispatch loads."
+    }
+  }
+}
