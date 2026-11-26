@@ -91,7 +91,7 @@ export const HomePage: React.FC<HomePageProps> = ({onNavigate}) => {
                   muted
                   loop
                   playsInline
-                  preload="metadata"
+                  preload="auto"
                   className="h-full w-full object-cover lg:h-full"
                 />
                 <div
