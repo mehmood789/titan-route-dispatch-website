@@ -19,33 +19,33 @@ export const DEFAULT_IMAGES = {
 };
 
 export const DEFAULT_SITE_CONTENT: SiteContent = {
-  companyName: 'Titan Route Dispatch LLC',
-  shortName: 'TITAN ROUTE DISPATCH',
+  companyName: 'Titan Route Dispatch (TRD) LLC',
+  shortName: 'Titan Route Dispatch (TRD) LLC',
   domain: 'trdispatch.us',
-  email: 'dispatch@trdispatch.us',
+  email: 'info@trdispatch.us',
   phone: '(800) 555-0194',
   whatsappNumber: '18005550194',
-  address: '1420 Stemmons Freeway, Suite 410, Dallas, TX 75207',
+  address: '30 N Gould St, Sheridan, WY 82801, USA',
   hours: 'Active Freight Support: 24/7/365 · New Carrier Setup: Mon–Sat 6AM–8PM CT',
   slogan: 'YOUR FREIGHT. OUR PRIORITY. YOUR SUCCESS.',
   footerText:
-    'Independent 24/7 freight dispatch, broker packet administration, and lane rate negotiation for American owner-operators and fleets across all 48 states.',
+    'Titan Route Dispatch (TRD) LLC provides independent 24/7 freight dispatch, broker packet administration, and lane rate negotiation for American owner-operators and fleets across all 48 states.',
   logoUrl: DEFAULT_IMAGES.logo,
   welcomeLogoUrl: DEFAULT_IMAGES.logo,
   faviconUrl: DEFAULT_IMAGES.logo,
   heroHeadline: 'American Freight Dispatch Built for Serious Carriers',
   heroSubheadline:
-    'Titan Route Dispatch LLC negotiates high-paying spot and contract freight, verifies broker credit, handles every carrier packet, and recovers detention pay while you focus on the highway.',
+    'Titan Route Dispatch (TRD) LLC negotiates high-paying spot and contract freight, verifies broker credit, handles every carrier packet, and recovers detention pay while you focus on the highway.',
   heroImage: DEFAULT_IMAGES.heroTruck,
   heroPrimaryCtaLabel: 'Register Your Truck',
   heroPrimaryCtaPage: 'register',
   heroSecondaryCtaLabel: 'Contact Dispatch',
   heroSecondaryCtaPage: 'contact',
-  welcomeHeadline: 'TITAN ROUTE DISPATCH',
+  welcomeHeadline: 'Titan Route Dispatch (TRD) LLC',
   welcomeSlogan: 'YOUR FREIGHT. OUR PRIORITY. YOUR SUCCESS.',
   operationsTitle: 'Broker Credit Vetting, Packet Setup & Detention Recovery Included',
   operationsDescription:
-    'Every broker is screened through Ansonia and factoring credit tables before we present a load. Your dispatcher sends clean BOL/POD packets straight to your factoring company.',
+    'Every broker is screened through Ansonia and factoring credit tables before we present a load. Your Titan Route Dispatch (TRD) LLC dispatcher sends clean BOL/POD packets straight to your factoring company.',
   operationsImage: DEFAULT_IMAGES.dispatchCenter,
   ctaTitle: 'Ready to Put a Dedicated US Dispatcher on Your Next Load?',
   ctaSubtitle:
@@ -62,9 +62,9 @@ export const DEFAULT_SITE_CONTENT: SiteContent = {
     bodyFont: 'DM Sans',
   },
   seo: {
-    title: 'Titan Route Dispatch LLC — trdispatch.us | US Freight Dispatch',
+    title: 'Titan Route Dispatch (TRD) LLC — US Freight Dispatch',
     description:
-      'Titan Route Dispatch LLC (trdispatch.us) — 24/7 American freight dispatch for Hotshot, Power Only, Box Truck, Dry Van, Reefer, and Flatbed carriers.',
+      'Titan Route Dispatch (TRD) LLC — 24/7 American freight dispatch for Hotshot, Power Only, Box Truck, Dry Van, Reefer, and Flatbed carriers.',
     ogImage: DEFAULT_IMAGES.heroTruck,
   },
   socialLinks: {
@@ -295,7 +295,7 @@ export const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
     afterMetric: '$3.34/mi avg RPM',
     outcomeSummary: '+34% gross revenue per truck across 90 days',
     quote:
-      'Before moving our three reefers to Titan Route Dispatch, I spent two hours every night on load boards and still ended up sitting in tight markets. Now our pre-plans are locked by 2 PM a day ahead, and every detention claim actually gets paid.',
+      'Before moving our three reefers to Titan Route Dispatch (TRD) LLC, I spent two hours every night on load boards and still ended up sitting in tight markets. Now our pre-plans are locked by 2 PM a day ahead, and every detention claim actually gets paid.',
     photoUrl: '',
     permissionGranted: true,
     displayOrder: 1,
@@ -312,7 +312,7 @@ export const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
     afterMetric: '6.5% weekly deadhead',
     outcomeSummary: '+$1,650 net weekly improvement on steel & machinery lanes',
     quote:
-      'Flatbed dispatch takes someone who actually understands coil weights, tarp pay, and mill hours. Titan never books cheap filler freight—they pair partial machinery loads cleanly and keep me rolling home every weekend.',
+      'Flatbed dispatch takes someone who actually understands coil weights, tarp pay, and mill hours. Titan Route Dispatch (TRD) LLC never books cheap filler freight—they pair partial machinery loads cleanly and keep me rolling home every weekend.',
     photoUrl: '',
     permissionGranted: true,
     displayOrder: 2,
@@ -356,7 +356,7 @@ export const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
 export const DEFAULT_MEDIA_ASSETS: MediaAsset[] = [
   {
     id: 'asset_trd_logo',
-    label: 'Original TRD Company Logo',
+    label: 'Original Titan Route Dispatch (TRD) LLC Logo',
     category: 'logo',
     fileName: 'Titan_Route_Dispatch_Logo_e0291ab3.png',
     mimeType: 'image/png',

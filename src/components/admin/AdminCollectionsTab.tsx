@@ -205,7 +205,7 @@ export const AdminCollectionsTab: React.FC<AdminCollectionsTabProps> = ({
       beforeMetric: '$2.40/mi avg',
       afterMetric: '$3.25/mi avg',
       outcomeSummary: '+$1,400 net weekly gain',
-      quote: 'Titan Route Dispatch keeps our trucks running high-paying lanes with zero paperwork headaches.',
+      quote: 'Titan Route Dispatch (TRD) LLC keeps our trucks running high-paying lanes with zero paperwork headaches.',
       photoUrl: '',
       permissionGranted: false,
       displayOrder: testimonials.length + 1,

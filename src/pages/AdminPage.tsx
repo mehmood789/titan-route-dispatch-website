@@ -212,7 +212,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({onNavigate}) => {
           </div>
 
           <h1 className="mt-2 text-center font-display text-2xl font-bold">
-            Titan Route Dispatch CMS
+            <strong>{activeContent.companyName}</strong> CMS
           </h1>
           <p className="mt-2 text-center text-sm text-[#AEBBC9]">
             Sign in with your authorized administrator credentials to manage site content, pricing, media, and carrier packets.
@@ -352,7 +352,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({onNavigate}) => {
           <div className="border-b border-white/10 p-5">
             <div className="text-xs font-medium text-[#AEBBC9]">Authorized Admin</div>
             <div className="mt-0.5 truncate font-display text-xs font-semibold text-white">
-              TRD Operations CMS
+              {activeContent.companyName} CMS
             </div>
           </div>
 
@@ -409,7 +409,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({onNavigate}) => {
           <div className="flex flex-col justify-between gap-4 border-b border-slate-200 pb-5 xl:flex-row xl:items-center">
             <div>
               <div className="flex items-center gap-2 text-xs text-slate-500">
-                <span>TRD Private CMS</span>
+                <span>{activeContent.companyName} Private CMS</span>
                 <span aria-hidden="true">/</span>
                 <span className="font-semibold text-[#081B32]">{TAB_TITLES[activeTab]}</span>
                 {hasUnsavedDraft && (

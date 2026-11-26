@@ -12,7 +12,7 @@ export const ResilientImage: React.FC<ResilientImageProps> = ({
   src,
   alt,
   className = 'w-full h-full object-cover',
-  fallbackTitle = 'Titan Route Dispatch LLC',
+  fallbackTitle = 'Titan Route Dispatch (TRD) LLC',
 }) => {
   const [errored, setErrored] = useState(false);
 

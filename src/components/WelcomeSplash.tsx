@@ -59,12 +59,11 @@ export const WelcomeSplash: React.FC<WelcomeSplashProps> = ({visible, onComplete
     >
       {/* Top Bar */}
       <div className="flex items-center justify-between px-6 py-5 sm:px-10">
-        <span
-          className="font-mono text-xs font-medium tracking-wider"
-          style={{color: colors.silverGrey}}
+        <strong
+          className="font-display text-sm font-bold tracking-wider text-white"
         >
-          {activeContent.domain}
-        </span>
+          {activeContent.companyName}
+        </strong>
         <button
           type="button"
           onClick={handleSkip}
@@ -81,13 +80,13 @@ export const WelcomeSplash: React.FC<WelcomeSplashProps> = ({visible, onComplete
         <div className="mb-5 rounded-2xl bg-white px-6 py-3.5 shadow-[0_18px_45px_rgba(0,0,0,0.5)]">
           <img
             src={activeContent.welcomeLogoUrl || activeContent.logoUrl}
-            alt={`${activeContent.companyName} Official Logo`}
+            alt="Titan Route Dispatch (TRD) LLC Official Logo"
             className="h-24 w-auto object-contain sm:h-28"
           />
         </div>
 
         <h1 className="font-display text-2xl font-extrabold tracking-tight text-white sm:text-4xl">
-          {activeContent.welcomeHeadline}
+          <strong>{activeContent.welcomeHeadline}</strong>
         </h1>
 
         <p

@@ -89,6 +89,20 @@ async function startServer() {
   ensureDir(PUBLIC_UPLOADS_DIR);
   ensureDir(PRIVATE_CARRIER_DOCS_DIR);
 
+  app.use((req, res, next) => {
+    const p = req.path.toLowerCase();
+    if (
+      p === '/admin' ||
+      p.startsWith('/admin/') ||
+      p === '/login' ||
+      p.startsWith('/login/') ||
+      p.startsWith('/api/')
+    ) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
+    next();
+  });
+
   app.get('/api/health', (_req, res) => {
     res.json({status: 'ok', service: 'titan-route-dispatch'});
   });

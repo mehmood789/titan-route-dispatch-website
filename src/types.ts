@@ -5,6 +5,11 @@ export type PageRoute =
   | 'testimonials'
   | 'register'
   | 'contact'
+  | 'contact-us'
+  | 'about-us'
+  | 'privacy-policy'
+  | 'terms-and-conditions'
+  | 'disclaimer'
   | 'admin';
 
 export type EquipmentType =

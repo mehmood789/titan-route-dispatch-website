@@ -599,7 +599,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({initialPlan, onNaviga
             </span>
           </div>
           <h1 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Register Your Carrier Authority With {activeContent.companyName}
+            Register Your Carrier Authority With{' '}
+            <strong className="font-extrabold">{activeContent.companyName}</strong>
           </h1>
           <p className="mt-3 max-w-2xl text-sm sm:text-base" style={{color: colors.silverGrey}}>
             Submit your MC/DOT details, upload compliance packet documents securely, and select your preferred freight lanes.

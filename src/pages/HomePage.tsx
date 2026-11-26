@@ -4,6 +4,7 @@ import {useCms} from '../context/CmsContext.tsx';
 import {KEY_METRICS} from '../lib/cmsDefaults.ts';
 import type {PageRoute} from '../types.ts';
 import {ResilientImage} from '../components/ResilientImage.tsx';
+import {BoldBrandText} from '../components/BoldBrandText.tsx';
 
 interface HomePageProps {
   onNavigate: (page: PageRoute) => void;
@@ -30,7 +31,7 @@ export const HomePage: React.FC<HomePageProps> = ({onNavigate}) => {
                 className="mb-3 flex flex-wrap items-center gap-2 text-xs font-semibold tracking-wider"
                 style={{color: colors.silverGrey}}
               >
-                <span>{activeContent.domain}</span>
+                <strong className="font-bold text-white">{activeContent.companyName}</strong>
                 <span aria-hidden="true">·</span>
                 <span>48-State Authority Support</span>
                 <span aria-hidden="true">·</span>
@@ -55,7 +56,7 @@ export const HomePage: React.FC<HomePageProps> = ({onNavigate}) => {
                 className="mt-4 max-w-xl text-base leading-relaxed"
                 style={{color: colors.silverGrey}}
               >
-                {activeContent.heroSubheadline}
+                <BoldBrandText text={activeContent.heroSubheadline} strongClassName="font-bold text-white" />
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3.5">
@@ -250,7 +251,7 @@ export const HomePage: React.FC<HomePageProps> = ({onNavigate}) => {
                   className="mt-3 text-sm leading-relaxed sm:text-base"
                   style={{color: colors.silverGrey}}
                 >
-                  {activeContent.operationsDescription}
+                  <BoldBrandText text={activeContent.operationsDescription} strongClassName="font-bold text-white" />
                 </p>
 
                 <ul className="mt-5 space-y-2.5 text-sm text-slate-200">
@@ -300,7 +301,7 @@ export const HomePage: React.FC<HomePageProps> = ({onNavigate}) => {
                   src={activeContent.operationsImage}
                   alt={`${activeContent.companyName} operations floor monitoring US interstate corridors`}
                   className="h-full w-full object-cover"
-                  fallbackTitle="TRD Operations Center"
+                  fallbackTitle={`${activeContent.companyName} Operations Center`}
                 />
               </div>
             </div>
@@ -365,7 +366,7 @@ export const HomePage: React.FC<HomePageProps> = ({onNavigate}) => {
                     </div>
 
                     <p className="mt-4 text-base leading-relaxed text-slate-700">
-                      “{item.quote}”
+                      “<BoldBrandText text={item.quote} strongClassName="font-bold text-slate-900" />”
                     </p>
                   </div>
 

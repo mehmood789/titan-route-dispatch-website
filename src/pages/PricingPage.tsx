@@ -210,7 +210,7 @@ export const PricingPage: React.FC<PricingPageProps> = ({onNavigate}) => {
                   Weekly Invoicing via Your Factoring or Direct ACH
                 </h3>
                 <p className="mt-1 text-sm text-slate-600">
-                  Brokers pay you or your factoring company directly—{activeContent.companyName} never touches your load settlement funds.
+                  Brokers pay you or your factoring company directly—<strong className="font-bold text-[#081B32]">{activeContent.companyName}</strong> never touches your load settlement funds.
                 </p>
               </div>
             </div>

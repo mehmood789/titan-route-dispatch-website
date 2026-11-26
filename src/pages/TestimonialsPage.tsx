@@ -3,6 +3,7 @@ import {ArrowRight, Quote} from 'lucide-react';
 import {useCms} from '../context/CmsContext.tsx';
 import type {PageRoute} from '../types.ts';
 import {ResilientImage} from '../components/ResilientImage.tsx';
+import {BoldBrandText} from '../components/BoldBrandText.tsx';
 
 interface TestimonialsPageProps {
   onNavigate: (page: PageRoute) => void;
@@ -34,7 +35,8 @@ export const TestimonialsPage: React.FC<TestimonialsPageProps> = ({onNavigate}) 
             <span style={{color: colors.professionalRed}}>Before &amp; After Performance</span>
           </div>
           <h1 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-5xl text-balance max-w-3xl">
-            How Independent Carriers Grow Weekly Gross With {activeContent.shortName}
+            How Independent Carriers Grow Weekly Gross With{' '}
+            <strong className="font-extrabold">{activeContent.companyName}</strong>
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed" style={{color: colors.silverGrey}}>
             Real operational results from dry van, reefer, flatbed, hotshot, and box truck fleets running under their own authority across 48 states.
@@ -99,20 +101,24 @@ export const TestimonialsPage: React.FC<TestimonialsPageProps> = ({onNavigate}) 
                     aria-hidden="true"
                   />
                   <p className="mt-2 text-base leading-relaxed text-slate-700">
-                    “{item.quote}”
+                    “<BoldBrandText text={item.quote} strongClassName="font-bold text-slate-900" />”
                   </p>
                 </div>
 
                 <div className="mt-6 border-t border-slate-200 pt-4">
                   <div className="grid grid-cols-2 gap-3 rounded-lg border border-slate-200 bg-white p-3.5">
                     <div>
-                      <div className="text-xs text-slate-500">Before TRD</div>
+                      <div className="text-xs text-slate-500">
+                        Before <strong className="font-bold text-slate-700">{activeContent.companyName}</strong>
+                      </div>
                       <div className="mt-0.5 font-mono text-sm font-semibold text-slate-700 tabular-nums">
                         {item.beforeMetric}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-500">With TRD</div>
+                      <div className="text-xs text-slate-500">
+                        With <strong className="font-bold text-slate-700">{activeContent.companyName}</strong>
+                      </div>
                       <div
                         className="mt-0.5 font-mono text-sm font-bold tabular-nums"
                         style={{color: colors.professionalRed}}
@@ -178,7 +184,7 @@ export const TestimonialsPage: React.FC<TestimonialsPageProps> = ({onNavigate}) 
                 src={activeContent.operationsImage}
                 alt={`${activeContent.companyName} operations desk monitoring US truck routes`}
                 className="h-full w-full object-cover"
-                fallbackTitle="TRD Operations Center"
+                fallbackTitle={`${activeContent.companyName} Operations Center`}
               />
             </div>
           </div>

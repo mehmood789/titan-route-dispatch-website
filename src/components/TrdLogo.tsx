@@ -22,37 +22,37 @@ export const TrdLogo: React.FC<TrdLogoProps> = ({
 
   if (variant === 'light') {
     return (
-      <span className="inline-flex items-center gap-3 whitespace-nowrap shrink-0">
-        <span className="inline-flex items-center justify-center rounded-xl bg-white px-3 py-1.5 shadow-md">
+      <span className="inline-flex items-center gap-3 shrink-0">
+        <span className="inline-flex items-center justify-center rounded-xl bg-white px-3 py-1.5 shadow-md shrink-0">
           <img
             src={logoSrc}
-            alt={`${activeContent.companyName} Logo`}
+            alt="Titan Route Dispatch (TRD) LLC Logo"
             className={`${heightClass} w-auto object-contain select-none`}
           />
         </span>
         {showWordmark && (
-          <span className="font-display text-lg font-bold tracking-tight text-white whitespace-nowrap">
+          <strong className="font-display text-base sm:text-lg font-extrabold tracking-tight text-white leading-tight">
             {activeContent.companyName}
-          </span>
+          </strong>
         )}
       </span>
     );
   }
 
   return (
-    <span className="inline-flex items-center gap-3 whitespace-nowrap shrink-0">
+    <span className="inline-flex items-center gap-2.5 sm:gap-3 shrink-0">
       <img
         src={logoSrc}
-        alt={`${activeContent.companyName} Logo`}
-        className={`${heightClass} w-auto object-contain select-none`}
+        alt="Titan Route Dispatch (TRD) LLC Logo"
+        className={`${heightClass} w-auto object-contain select-none shrink-0`}
       />
       {showWordmark && (
-        <span
-          className="hidden sm:inline font-display text-base font-bold tracking-tight whitespace-nowrap"
+        <strong
+          className="font-display text-xs sm:text-sm lg:text-base font-extrabold tracking-tight leading-tight"
           style={{color: activeContent.colors.deepNavy}}
         >
           {activeContent.companyName}
-        </span>
+        </strong>
       )}
     </span>
   );

@@ -3,6 +3,7 @@ import {MessageCircle, RotateCcw} from 'lucide-react';
 import {useCms} from '../context/CmsContext.tsx';
 import type {PageRoute} from '../types.ts';
 import {TrdLogo} from './TrdLogo.tsx';
+import {BoldBrandText} from './BoldBrandText.tsx';
 
 interface FooterProps {
   onNavigate: (page: PageRoute) => void;
@@ -25,14 +26,19 @@ export const Footer: React.FC<FooterProps> = ({onNavigate, onReplayIntro}) => {
     {label: 'X', url: socialLinks.x},
   ].filter((item) => item.url && item.url.trim().length > 0);
 
+  const handleRouteLink = (e: React.MouseEvent<HTMLAnchorElement>, page: PageRoute) => {
+    e.preventDefault();
+    onNavigate(page);
+  };
+
   return (
     <footer
       className="border-t border-white/10"
       style={{backgroundColor: colors.darkBackground, color: colors.silverGrey}}
     >
       <div className="mx-auto max-w-[1200px] px-4 py-12 sm:px-6">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
-          <div className="md:col-span-2">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
+          <div className="md:col-span-5">
             <TrdLogo variant="light" size="sm" />
             <p
               className="mt-4 text-xs font-bold tracking-[0.14em]"
@@ -44,10 +50,10 @@ export const Footer: React.FC<FooterProps> = ({onNavigate, onReplayIntro}) => {
               className="mt-2.5 max-w-md text-sm leading-relaxed"
               style={{color: colors.silverGrey}}
             >
-              {activeContent.footerText}
+              <BoldBrandText text={activeContent.footerText} strongClassName="font-bold text-white" />
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-slate-300">
-              <span>{activeContent.domain}</span>
+              <strong className="font-bold text-white">{activeContent.companyName}</strong>
               <span aria-hidden="true">·</span>
               <span>{activeContent.email}</span>
               <span aria-hidden="true">·</span>
@@ -71,69 +77,78 @@ export const Footer: React.FC<FooterProps> = ({onNavigate, onReplayIntro}) => {
             )}
           </div>
 
-          <div>
-            <h3 className="font-display text-sm font-semibold text-white">Navigation</h3>
+          <div className="md:col-span-2">
+            <h3 className="font-display text-sm font-semibold text-white">Company</h3>
             <ul className="mt-3 space-y-2.5 text-sm">
               <li>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('home')}
-                  className="hover:text-white transition-colors cursor-pointer"
+                <a
+                  href="/"
+                  onClick={(e) => handleRouteLink(e, 'home')}
+                  className="hover:text-white transition-colors"
                 >
                   Home
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('services')}
-                  className="hover:text-white transition-colors cursor-pointer"
+                <a
+                  href="/about-us"
+                  onClick={(e) => handleRouteLink(e, 'about-us')}
+                  className="hover:text-white transition-colors"
+                >
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/services"
+                  onClick={(e) => handleRouteLink(e, 'services')}
+                  className="hover:text-white transition-colors"
                 >
                   Dispatch Services
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('pricing')}
-                  className="hover:text-white transition-colors cursor-pointer"
+                <a
+                  href="/pricing"
+                  onClick={(e) => handleRouteLink(e, 'pricing')}
+                  className="hover:text-white transition-colors"
                 >
                   Pricing Plans
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('testimonials')}
-                  className="hover:text-white transition-colors cursor-pointer"
+                <a
+                  href="/testimonials"
+                  onClick={(e) => handleRouteLink(e, 'testimonials')}
+                  className="hover:text-white transition-colors"
                 >
                   Carrier Reviews
-                </button>
+                </a>
               </li>
             </ul>
           </div>
 
-          <div>
+          <div className="md:col-span-3">
             <h3 className="font-display text-sm font-semibold text-white">Carrier Desk</h3>
             <ul className="mt-3 space-y-2.5 text-sm">
               <li>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('register')}
-                  className="font-semibold hover:opacity-85 transition-opacity cursor-pointer"
+                <a
+                  href="/register"
+                  onClick={(e) => handleRouteLink(e, 'register')}
+                  className="font-semibold hover:opacity-85 transition-opacity"
                   style={{color: colors.professionalRed}}
                 >
                   Register Your Truck
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('contact')}
-                  className="hover:text-white transition-colors cursor-pointer"
+                <a
+                  href="/contact-us"
+                  onClick={(e) => handleRouteLink(e, 'contact-us')}
+                  className="hover:text-white transition-colors"
                 >
-                  Contact Dispatch
-                </button>
+                  Contact Us
+                </a>
               </li>
               <li>
                 <a
@@ -162,13 +177,46 @@ export const Footer: React.FC<FooterProps> = ({onNavigate, onReplayIntro}) => {
               </li>
             </ul>
           </div>
+
+          <div className="md:col-span-2">
+            <h3 className="font-display text-sm font-semibold text-white">Legal &amp; Compliance</h3>
+            <ul className="mt-3 space-y-2.5 text-sm">
+              <li>
+                <a
+                  href="/privacy-policy"
+                  onClick={(e) => handleRouteLink(e, 'privacy-policy')}
+                  className="hover:text-white transition-colors"
+                >
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/terms-and-conditions"
+                  onClick={(e) => handleRouteLink(e, 'terms-and-conditions')}
+                  className="hover:text-white transition-colors"
+                >
+                  Terms &amp; Conditions
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/disclaimer"
+                  onClick={(e) => handleRouteLink(e, 'disclaimer')}
+                  className="hover:text-white transition-colors"
+                >
+                  Disclaimer
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center">
           <p>
-            © {new Date().getFullYear()} {activeContent.companyName} ({activeContent.domain}). All rights reserved.
+            © {new Date().getFullYear()} <strong className="font-bold text-white">{activeContent.companyName}</strong>. All rights reserved.
           </p>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <span>{activeContent.address}</span>
           </div>
         </div>

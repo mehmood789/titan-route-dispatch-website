@@ -42,39 +42,51 @@ import type {
   UploadedDocument,
 } from '../types.ts';
 
+const FULL_COMPANY_NAME = 'Titan Route Dispatch (TRD) LLC';
+
+function normalizeVisibleBrandText(value?: string | null): string {
+  if (!value) return '';
+  return value.replace(
+    /Titan Route Dispatch\s*\(TRD\)(?:\s*LLC)?|Titan Route Dispatch LLC|Titan Route Dispatch|TR Dispatch|(?<![@.\w-])TRD(?![\w-])|(?<![@./:])\btrdispatch\.us\b/gi,
+    FULL_COMPANY_NAME
+  );
+}
+
 function sanitizeSiteContentForWrite(content: SiteContent): Record<string, unknown> {
-  const safeEmail =
-    content.email && !content.email.trim().toLowerCase().startsWith('info@')
-      ? content.email.trim()
-      : DEFAULT_SITE_CONTENT.email;
+  const safeEmail = content.email?.trim() || DEFAULT_SITE_CONTENT.email;
+  const safeAddress =
+    content.address?.includes('1420 Stemmons') || !content.address?.trim()
+      ? DEFAULT_SITE_CONTENT.address
+      : content.address.trim();
   return {
-    companyName: content.companyName,
-    shortName: content.shortName,
-    domain: content.domain,
-    email: safeEmail,
+    companyName: normalizeVisibleBrandText(content.companyName) || DEFAULT_SITE_CONTENT.companyName,
+    shortName: normalizeVisibleBrandText(content.shortName) || DEFAULT_SITE_CONTENT.shortName,
+    domain: content.domain || DEFAULT_SITE_CONTENT.domain,
+    email:
+      safeEmail.toLowerCase() === 'dispatch@trdispatch.us' ? DEFAULT_SITE_CONTENT.email : safeEmail,
     phone: content.phone,
     whatsappNumber: content.whatsappNumber,
-    address: content.address,
+    address: safeAddress,
     hours: content.hours,
     slogan: content.slogan,
-    footerText: content.footerText,
+    footerText: normalizeVisibleBrandText(content.footerText),
     logoUrl: content.logoUrl,
     welcomeLogoUrl: content.welcomeLogoUrl,
     faviconUrl: content.faviconUrl,
-    heroHeadline: content.heroHeadline,
-    heroSubheadline: content.heroSubheadline,
+    heroHeadline: normalizeVisibleBrandText(content.heroHeadline),
+    heroSubheadline: normalizeVisibleBrandText(content.heroSubheadline),
     heroImage: content.heroImage,
     heroPrimaryCtaLabel: content.heroPrimaryCtaLabel,
     heroPrimaryCtaPage: content.heroPrimaryCtaPage,
     heroSecondaryCtaLabel: content.heroSecondaryCtaLabel,
     heroSecondaryCtaPage: content.heroSecondaryCtaPage,
-    welcomeHeadline: content.welcomeHeadline,
+    welcomeHeadline: normalizeVisibleBrandText(content.welcomeHeadline) || DEFAULT_SITE_CONTENT.welcomeHeadline,
     welcomeSlogan: content.welcomeSlogan,
-    operationsTitle: content.operationsTitle,
-    operationsDescription: content.operationsDescription,
+    operationsTitle: normalizeVisibleBrandText(content.operationsTitle),
+    operationsDescription: normalizeVisibleBrandText(content.operationsDescription),
     operationsImage: content.operationsImage,
-    ctaTitle: content.ctaTitle,
-    ctaSubtitle: content.ctaSubtitle,
+    ctaTitle: normalizeVisibleBrandText(content.ctaTitle),
+    ctaSubtitle: normalizeVisibleBrandText(content.ctaSubtitle),
     colors: {
       deepNavy: content.colors.deepNavy,
       professionalRed: content.colors.professionalRed,
@@ -87,8 +99,9 @@ function sanitizeSiteContentForWrite(content: SiteContent): Record<string, unkno
       bodyFont: content.typography.bodyFont,
     },
     seo: {
-      title: content.seo.title,
-      description: content.seo.description,
+      title: normalizeVisibleBrandText(content.seo.title) || DEFAULT_SITE_CONTENT.seo.title,
+      description:
+        normalizeVisibleBrandText(content.seo.description) || DEFAULT_SITE_CONTENT.seo.description,
       ogImage: content.seo.ogImage,
     },
     socialLinks: {
@@ -194,19 +207,47 @@ function mergeSiteContent(raw?: Partial<SiteContent> | null): SiteContent {
   if (!raw) return DEFAULT_SITE_CONTENT;
   const rawEmail = typeof raw.email === 'string' ? raw.email.trim() : '';
   const safeEmail =
-    rawEmail && !rawEmail.toLowerCase().startsWith('info@')
-      ? rawEmail
-      : DEFAULT_SITE_CONTENT.email;
+    !rawEmail || rawEmail.toLowerCase() === 'dispatch@trdispatch.us'
+      ? DEFAULT_SITE_CONTENT.email
+      : rawEmail;
+  const rawAddress = typeof raw.address === 'string' ? raw.address.trim() : '';
+  const safeAddress =
+    !rawAddress || rawAddress.includes('1420 Stemmons')
+      ? DEFAULT_SITE_CONTENT.address
+      : rawAddress;
   const filteredNav = Array.isArray(raw.navItems)
     ? raw.navItems.filter((n) => n.page !== 'admin')
     : [];
+  const mergedSeo = {...DEFAULT_SITE_CONTENT.seo, ...(raw.seo || {})};
   return {
     ...DEFAULT_SITE_CONTENT,
     ...raw,
+    companyName:
+      normalizeVisibleBrandText(raw.companyName) || DEFAULT_SITE_CONTENT.companyName,
+    shortName: normalizeVisibleBrandText(raw.shortName) || DEFAULT_SITE_CONTENT.shortName,
+    welcomeHeadline:
+      normalizeVisibleBrandText(raw.welcomeHeadline) || DEFAULT_SITE_CONTENT.welcomeHeadline,
+    heroHeadline: normalizeVisibleBrandText(raw.heroHeadline) || DEFAULT_SITE_CONTENT.heroHeadline,
+    heroSubheadline:
+      normalizeVisibleBrandText(raw.heroSubheadline) || DEFAULT_SITE_CONTENT.heroSubheadline,
+    footerText: normalizeVisibleBrandText(raw.footerText) || DEFAULT_SITE_CONTENT.footerText,
+    operationsTitle:
+      normalizeVisibleBrandText(raw.operationsTitle) || DEFAULT_SITE_CONTENT.operationsTitle,
+    operationsDescription:
+      normalizeVisibleBrandText(raw.operationsDescription) ||
+      DEFAULT_SITE_CONTENT.operationsDescription,
+    ctaTitle: normalizeVisibleBrandText(raw.ctaTitle) || DEFAULT_SITE_CONTENT.ctaTitle,
+    ctaSubtitle: normalizeVisibleBrandText(raw.ctaSubtitle) || DEFAULT_SITE_CONTENT.ctaSubtitle,
     email: safeEmail,
+    address: safeAddress,
     colors: {...DEFAULT_SITE_CONTENT.colors, ...(raw.colors || {})},
     typography: {...DEFAULT_SITE_CONTENT.typography, ...(raw.typography || {})},
-    seo: {...DEFAULT_SITE_CONTENT.seo, ...(raw.seo || {})},
+    seo: {
+      ...mergedSeo,
+      title: normalizeVisibleBrandText(mergedSeo.title) || DEFAULT_SITE_CONTENT.seo.title,
+      description:
+        normalizeVisibleBrandText(mergedSeo.description) || DEFAULT_SITE_CONTENT.seo.description,
+    },
     socialLinks: {...DEFAULT_SITE_CONTENT.socialLinks, ...(raw.socialLinks || {})},
     sections: {...DEFAULT_SITE_CONTENT.sections, ...(raw.sections || {})},
     navItems: filteredNav.length > 0 ? filteredNav : DEFAULT_SITE_CONTENT.navItems,
@@ -284,7 +325,14 @@ export async function getTestimonials(): Promise<TestimonialItem[]> {
     const snap = await getDocs(collection(db, 'testimonials'));
     if (snap.empty) return DEFAULT_TESTIMONIALS;
     return snap.docs
-      .map((d) => d.data() as TestimonialItem)
+      .map((d) => {
+        const item = d.data() as TestimonialItem;
+        return {
+          ...item,
+          quote: normalizeVisibleBrandText(item.quote),
+          outcomeSummary: normalizeVisibleBrandText(item.outcomeSummary),
+        };
+      })
       .sort((a, b) => Number(a.displayOrder) - Number(b.displayOrder));
   } catch {
     return DEFAULT_TESTIMONIALS;

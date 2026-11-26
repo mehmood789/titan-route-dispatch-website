@@ -11,9 +11,13 @@ import {
 import {useCms} from '../context/CmsContext.tsx';
 import {submitContactInquiry} from '../lib/cmsService.ts';
 import {sanitizeUiError} from '../lib/firebase.ts';
-import type {ContactInquiry} from '../types.ts';
+import type {ContactInquiry, PageRoute} from '../types.ts';
 
-export const ContactPage: React.FC = () => {
+interface ContactPageProps {
+  onNavigate?: (page: PageRoute) => void;
+}
+
+export const ContactPage: React.FC<ContactPageProps> = ({onNavigate}) => {
   const {activeContent} = useCms();
   const {colors} = activeContent;
 
@@ -66,15 +70,16 @@ export const ContactPage: React.FC = () => {
       <section className="py-12 text-white" style={{backgroundColor: colors.darkBackground}}>
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
           <div className="text-xs font-medium" style={{color: colors.silverGrey}}>
-            <span>{activeContent.domain}</span>
+            <strong className="font-bold text-white">{activeContent.companyName}</strong>
             <span className="mx-2" aria-hidden="true">·</span>
             <span style={{color: colors.professionalRed}}>24/7 Operations &amp; WhatsApp Desk</span>
           </div>
           <h1 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Contact {activeContent.companyName}
+            Contact <strong className="font-extrabold">{activeContent.companyName}</strong>
           </h1>
           <p className="mt-3 max-w-2xl text-sm sm:text-base" style={{color: colors.silverGrey}}>
-            Have questions about new authority setup, fleet pricing, or current lane availability? Reach our US dispatch desk directly by phone, email, or WhatsApp.
+            Have questions about new authority setup, fleet pricing, or current lane availability? Reach the{' '}
+            <strong className="font-bold text-white">{activeContent.companyName}</strong> US dispatch desk directly by phone, email, or WhatsApp.
           </p>
         </div>
       </section>
@@ -284,7 +289,23 @@ export const ContactPage: React.FC = () => {
                 />
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <p className="text-xs text-slate-500">
+                  By sending this inquiry, you agree to our{' '}
+                  <a
+                    href="/privacy-policy"
+                    onClick={(e) => {
+                      if (onNavigate) {
+                        e.preventDefault();
+                        onNavigate('privacy-policy');
+                      }
+                    }}
+                    className="font-semibold underline underline-offset-2 hover:text-[#081B32]"
+                  >
+                    Privacy Policy
+                  </a>
+                  .
+                </p>
                 <button
                   type="submit"
                   disabled={submitting}

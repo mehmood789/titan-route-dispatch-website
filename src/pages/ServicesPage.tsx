@@ -50,7 +50,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({onNavigate}) => {
       <section className="py-14 text-white" style={{backgroundColor: colors.darkBackground}}>
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
           <div className="text-xs font-medium" style={{color: colors.silverGrey}}>
-            <span>{activeContent.companyName}</span>
+            <strong className="font-bold text-white">{activeContent.companyName}</strong>
             <span className="mx-2" aria-hidden="true">·</span>
             <span style={{color: colors.professionalRed}}>
               {services.length} Specialized Equipment Divisions

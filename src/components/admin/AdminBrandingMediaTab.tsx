@@ -181,7 +181,7 @@ export const AdminBrandingMediaTab: React.FC<AdminBrandingMediaTabProps> = ({
             : 'Upload Truck, Hero, Service, or Background Photo'}
         </h2>
         <p className="mt-1 text-xs text-slate-500">
-          Preview your uploaded file before saving it to the secure TRD media library.
+          Preview your uploaded file before saving it to the secure Titan Route Dispatch (TRD) LLC media library.
         </p>
 
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-12">
@@ -191,7 +191,7 @@ export const AdminBrandingMediaTab: React.FC<AdminBrandingMediaTabProps> = ({
               type="text"
               value={uploadLabel}
               onChange={(e) => setUploadLabel(e.target.value)}
-              placeholder={mode === 'logo' ? 'e.g. Transparent White TRD Logo' : 'e.g. Hero Freightliner'}
+              placeholder={mode === 'logo' ? 'e.g. Transparent White Company Logo' : 'e.g. Hero Freightliner'}
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-[#081B32]"
             />
           </div>

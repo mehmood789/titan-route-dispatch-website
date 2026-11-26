@@ -53,39 +53,63 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://trdispatch.us/</loc>
-    <lastmod>2026-11-25</lastmod>
+    <lastmod>2026-11-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://trdispatch.us/about-us</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://trdispatch.us/services</loc>
-    <lastmod>2026-11-25</lastmod>
+    <lastmod>2026-11-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://trdispatch.us/pricing</loc>
-    <lastmod>2026-11-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://trdispatch.us/register</loc>
-    <lastmod>2026-11-25</lastmod>
+    <lastmod>2026-11-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://trdispatch.us/testimonials</loc>
-    <lastmod>2026-11-25</lastmod>
+    <lastmod>2026-11-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://trdispatch.us/contact</loc>
-    <lastmod>2026-11-25</lastmod>
+    <loc>https://trdispatch.us/register</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://trdispatch.us/contact-us</loc>
+    <lastmod>2026-11-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://trdispatch.us/privacy-policy</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://trdispatch.us/terms-and-conditions</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://trdispatch.us/disclaimer</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>
 `;
@@ -593,7 +617,23 @@ export default {
       return jsonResponse({error: 'API endpoint not found'}, 404);
     }
 
-    // 10. All static assets and SPA frontend routes
-    return env.ASSETS.fetch(request);
+    // 10. All static assets and SPA frontend routes (enforce noindex on private/admin paths)
+    const assetResponse = await env.ASSETS.fetch(request);
+    if (
+      pathname === '/admin' ||
+      pathname.startsWith('/admin/') ||
+      pathname === '/login' ||
+      pathname.startsWith('/login/')
+    ) {
+      const headers = new Headers(assetResponse.headers);
+      headers.set('X-Robots-Tag', 'noindex, nofollow');
+      headers.set('Cache-Control', 'private, no-store');
+      return new Response(assetResponse.body, {
+        status: assetResponse.status,
+        statusText: assetResponse.statusText,
+        headers,
+      });
+    }
+    return assetResponse;
   },
 };

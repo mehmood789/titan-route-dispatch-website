@@ -68,26 +68,26 @@ export const AmericanTruckSvg: React.FC<AmericanTruckSvgProps> = ({
 
         {/* Trailer Typography */}
         <text
-          x="176"
-          y="69"
+          x="166"
+          y="70"
           fill="#081B32"
-          fontSize="21"
+          fontSize="16.5"
           fontWeight="800"
           fontFamily="Plus Jakarta Sans, sans-serif"
-          letterSpacing="-0.4"
+          letterSpacing="0.5"
         >
-          TITAN ROUTE DISPATCH
+          Titan Route Dispatch (TRD) LLC
         </text>
         <text
-          x="176"
-          y="86"
+          x="166"
+          y="88"
           fill="#D52B35"
-          fontSize="11"
+          fontSize="10.5"
           fontWeight="700"
           fontFamily="Plus Jakarta Sans, sans-serif"
-          letterSpacing="2.2"
+          letterSpacing="2"
         >
-          TRDISPATCH.US · 48-STATE FREIGHT
+          48-STATE FREIGHT DISPATCH
         </text>
 
         {/* Trailer Undercarriage & Aero Skirt */}

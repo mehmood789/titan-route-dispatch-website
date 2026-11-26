@@ -11,7 +11,11 @@
       "/api/*",
       "/uploads/*",
       "/sitemap.xml",
-      "/robots.txt"
+      "/robots.txt",
+      "/admin",
+      "/admin/*",
+      "/login",
+      "/login/*"
     ]
   },
   "vars": {

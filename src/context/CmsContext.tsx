@@ -423,19 +423,6 @@ export const CmsProvider: React.FC<{children: React.ReactNode}> = ({children}) =
       }
     }
 
-    if (seo.title) {
-      document.title = seo.title;
-      const ogTitle = document.querySelector('meta[property="og:title"]');
-      if (ogTitle) ogTitle.setAttribute('content', seo.title);
-    }
-
-    if (seo.description) {
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', seo.description);
-      const ogDesc = document.querySelector('meta[property="og:description"]');
-      if (ogDesc) ogDesc.setAttribute('content', seo.description);
-    }
-
     if (seo.ogImage) {
       let ogImg = document.querySelector('meta[property="og:image"]') as HTMLMetaElement | null;
       if (!ogImg) {
