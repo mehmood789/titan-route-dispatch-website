@@ -85,11 +85,14 @@ export const HomePage: React.FC<HomePageProps> = ({onNavigate}) => {
                 className="relative h-full min-h-[290px] overflow-hidden rounded-xl border border-white/15"
                 style={{backgroundColor: colors.deepNavy}}
               >
-                <ResilientImage
-                  src={activeContent.heroImage}
-                  alt={`${activeContent.companyName} US freight operations`}
+                <video
+                  src="/hero-truck.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
                   className="h-full w-full object-cover lg:h-full"
-                  fallbackTitle={activeContent.companyName}
                 />
                 <div
                   className="pointer-events-none absolute inset-0"
