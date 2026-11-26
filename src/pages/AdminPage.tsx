@@ -8,6 +8,7 @@ import {
   Image as ImageIcon,
   LayoutDashboard,
   LayoutTemplate,
+  Loader2,
   Lock,
   LogOut,
   Mail,
@@ -74,8 +75,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({onNavigate}) => {
   const {
     user,
     authReady,
+    authBusy,
     isAdmin,
     authError,
+    loginWithEmailPassword,
     loginWithGoogle,
     logoutAdmin,
     activeContent,
@@ -86,6 +89,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({onNavigate}) => {
     publishDraft,
   } = useCms();
 
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [carriers, setCarriers] = useState<CarrierApplication[]>([]);
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
@@ -169,11 +174,20 @@ export const AdminPage: React.FC<AdminPageProps> = ({onNavigate}) => {
     onNavigate('home');
   };
 
+  const handleEmailSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (authBusy) return;
+    await loginWithEmailPassword(loginEmail, loginPassword);
+  };
+
   // Private Admin Authentication Gate
   if (!authReady) {
     return (
       <div className="flex min-h-[70vh] items-center justify-center bg-[#050F1C] text-white">
-        <div className="text-sm text-[#AEBBC9]">Verifying administrator session...</div>
+        <div className="flex items-center gap-2.5 text-sm text-[#AEBBC9]">
+          <Loader2 className="h-4 w-4 animate-spin text-[#D52B35]" aria-hidden="true" />
+          <span>Verifying administrator session...</span>
+        </div>
       </div>
     );
   }
@@ -201,7 +215,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({onNavigate}) => {
             Titan Route Dispatch CMS
           </h1>
           <p className="mt-2 text-center text-sm text-[#AEBBC9]">
-            Sign in with an authorized administrator Google account to manage site content, pricing, media, and carrier packets.
+            Sign in with your authorized administrator credentials to manage site content, pricing, media, and carrier packets.
           </p>
 
           {authError && (
@@ -213,13 +227,72 @@ export const AdminPage: React.FC<AdminPageProps> = ({onNavigate}) => {
             </div>
           )}
 
-          <div className="mt-6 space-y-3">
+          <form onSubmit={handleEmailSignIn} className="mt-6 space-y-3.5" noValidate>
+            <div>
+              <label htmlFor="admin-email" className="block text-xs font-semibold text-[#AEBBC9]">
+                Administrator Email
+              </label>
+              <input
+                id="admin-email"
+                type="email"
+                autoComplete="username"
+                required
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="Administrator email"
+                className="mt-1.5 w-full rounded-lg border border-white/15 bg-[#050F1C] px-3.5 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-[#D52B35] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="admin-password" className="block text-xs font-semibold text-[#AEBBC9]">
+                Password
+              </label>
+              <input
+                id="admin-password"
+                type="password"
+                autoComplete="current-password"
+                required
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="Password"
+                className="mt-1.5 w-full rounded-lg border border-white/15 bg-[#050F1C] px-3.5 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-[#D52B35] focus:outline-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={authBusy}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#D52B35] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#B81F28] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+            >
+              {authBusy ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  <span>Signing In...</span>
+                </>
+              ) : (
+                <>
+                  <Lock className="h-4 w-4" aria-hidden="true" />
+                  <span>Sign In</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="my-5 flex items-center gap-3 text-[11px] uppercase tracking-wider text-[#AEBBC9]/60">
+            <span className="h-px flex-1 bg-white/10" aria-hidden="true" />
+            <span>or</span>
+            <span className="h-px flex-1 bg-white/10" aria-hidden="true" />
+          </div>
+
+          <div className="space-y-3">
             <button
               type="button"
+              disabled={authBusy}
               onClick={loginWithGoogle}
-              className="inline-flex w-full items-center justify-center gap-2.5 rounded-lg bg-[#D52B35] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#B81F28] cursor-pointer"
+              className="inline-flex w-full items-center justify-center gap-2.5 rounded-lg border border-white/20 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
             >
-              <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+              <ShieldCheck className="h-4 w-4 text-[#D52B35]" aria-hidden="true" />
               <span>Sign In With Google</span>
             </button>
 

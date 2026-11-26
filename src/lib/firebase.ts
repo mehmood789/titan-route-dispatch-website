@@ -1,5 +1,10 @@
 import {initializeApp} from 'firebase/app';
-import {getAuth, GoogleAuthProvider} from 'firebase/auth';
+import {
+  browserLocalPersistence,
+  getAuth,
+  GoogleAuthProvider,
+  setPersistence,
+} from 'firebase/auth';
 import {doc, getDocFromServer, getFirestore} from 'firebase/firestore';
 import {getStorage} from 'firebase/storage';
 import firebaseConfig from '../../firebase-applet-config.json';
@@ -7,6 +12,9 @@ import firebaseConfig from '../../firebase-applet-config.json';
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence).catch(() => {
+  // Ignore persistence setup warnings in restricted environments
+});
 export const storage = getStorage(app);
 storage.maxUploadRetryTime = 3000;
 storage.maxOperationRetryTime = 3000;

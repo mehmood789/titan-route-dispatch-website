@@ -1,6 +1,7 @@
-import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
+import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
   type User,
@@ -36,8 +37,10 @@ import type {
 interface CmsContextValue {
   user: User | null;
   authReady: boolean;
+  authBusy: boolean;
   isAdmin: boolean;
   authError: string;
+  loginWithEmailPassword: (email: string, password: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logoutAdmin: () => Promise<void>;
 
@@ -76,28 +79,102 @@ const GOOGLE_FONT_MAP: Record<string, string> = {
   Roboto: 'Roboto:wght@400;500;700',
 };
 
-async function verifyServerAdminSession(user: User): Promise<boolean> {
-  if (!user.emailVerified) return false;
+interface AdminVerificationResult {
+  authorized: boolean;
+  error?: string;
+}
+
+function formatFirebaseAuthError(err: unknown): string {
+  const code =
+    typeof err === 'object' && err !== null && 'code' in err
+      ? String((err as {code?: unknown}).code || '')
+      : '';
+  const msg = err instanceof Error ? err.message : String(err || '');
+
+  if (code === 'auth/popup-closed-by-user' || msg.includes('popup-closed-by-user')) {
+    return '';
+  }
+  if (
+    code === 'auth/invalid-credential' ||
+    code === 'auth/wrong-password' ||
+    code === 'auth/user-not-found' ||
+    code === 'auth/invalid-email'
+  ) {
+    return 'Invalid administrator email or password.';
+  }
+  if (code === 'auth/operation-not-allowed') {
+    return 'Email/Password sign-in is not enabled in Firebase Authentication. Enable it in Firebase Console or use Sign In With Google below.';
+  }
+  if (code === 'auth/too-many-requests') {
+    return 'Too many failed sign-in attempts. Wait a few minutes before trying again.';
+  }
+  if (code === 'auth/unauthorized-domain') {
+    return 'This domain is not authorized in Firebase Authentication. Add this domain under Firebase Console → Authentication → Settings → Authorized domains.';
+  }
+  if (code === 'auth/popup-blocked') {
+    return 'Browser blocked the Google sign-in popup. Allow popups for this site or sign in with your administrator email and password.';
+  }
+  if (code === 'auth/network-request-failed') {
+    return 'Network error while contacting Firebase Authentication. Please check your connection and try again.';
+  }
+  return 'Authentication failed. Please verify your administrator credentials and try again.';
+}
+
+async function verifyServerAdminSession(user: User): Promise<AdminVerificationResult> {
+  if (!user.emailVerified) {
+    return {
+      authorized: false,
+      error:
+        'Your administrator email is not marked verified in Firebase Authentication. Verify your email or sign in with Google.',
+    };
+  }
+
   try {
-    const token = await user.getIdToken();
+    const token = await user.getIdToken(true);
     const res = await fetch('/api/auth/admin-status', {
       headers: {
         Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
       },
     });
-    if (!res.ok) return false;
-    const data = (await res.json()) as {authorized?: boolean};
-    return Boolean(data.authorized);
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      return {
+        authorized: false,
+        error:
+          'Administrator verification endpoint (/api/auth/admin-status) did not return JSON. Verify the Worker API routing.',
+      };
+    }
+
+    const data = (await res.json()) as {authorized?: boolean; error?: string};
+    if (res.ok && data.authorized) {
+      return {authorized: true};
+    }
+    if (res.status === 403) {
+      return {
+        authorized: false,
+        error: 'Access denied. This account is not authorized for administrator access.',
+      };
+    }
+    return {
+      authorized: false,
+      error: data.error || 'Unable to verify administrator session. Please sign in again.',
+    };
   } catch {
-    return false;
+    return {
+      authorized: false,
+      error: 'Unable to reach administrator verification service. Please try again.',
+    };
   }
 }
 
 export const CmsProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [user, setUser] = useState<User | null>(null);
   const [authReady, setAuthReady] = useState(false);
+  const [authBusy, setAuthBusy] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [authError, setAuthError] = useState('');
+  const loginInProgressRef = useRef(false);
 
   const [publishedContent, setPublishedContent] = useState<SiteContent>(DEFAULT_SITE_CONTENT);
   const [draftContent, setDraftContent] = useState<SiteContent>(DEFAULT_SITE_CONTENT);
@@ -160,24 +237,51 @@ export const CmsProvider: React.FC<{children: React.ReactNode}> = ({children}) =
   }, [refreshPublicCms]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
-      setUser(nextUser);
-      if (!nextUser) {
-        setIsAdmin(false);
-        setAuthReady(true);
-        return;
-      }
+    let active = true;
+    let unsubscribe: (() => void) | undefined;
 
-      const authorized = await verifyServerAdminSession(nextUser);
-      setIsAdmin(authorized);
-      if (!authorized) {
-        setAuthError('Access denied. This account is not authorized for administrator access.');
-      } else {
-        setAuthError('');
+    (async () => {
+      try {
+        await auth.authStateReady();
+      } catch {
+        // Ignore authStateReady failure and continue with listener
       }
-      setAuthReady(true);
-    });
-    return () => unsubscribe();
+      if (!active) return;
+
+      unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
+        if (!active) return;
+
+        // Avoid race condition while an explicit login flow is actively verifying the user
+        if (loginInProgressRef.current) {
+          setUser(nextUser);
+          return;
+        }
+
+        setUser(nextUser);
+        if (!nextUser) {
+          setIsAdmin(false);
+          setAuthReady(true);
+          return;
+        }
+
+        const check = await verifyServerAdminSession(nextUser);
+        if (!active) return;
+        setIsAdmin(check.authorized);
+        if (!check.authorized) {
+          setAuthError(
+            check.error || 'Access denied. This account is not authorized for administrator access.'
+          );
+        } else {
+          setAuthError('');
+        }
+        setAuthReady(true);
+      });
+    })();
+
+    return () => {
+      active = false;
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -188,26 +292,67 @@ export const CmsProvider: React.FC<{children: React.ReactNode}> = ({children}) =
     }
   }, [isAdmin, refreshAdminCms]);
 
+  const completeSignIn = useCallback(async (signedUser: User) => {
+    const check = await verifyServerAdminSession(signedUser);
+    if (!check.authorized) {
+      await signOut(auth);
+      setUser(null);
+      setIsAdmin(false);
+      setAuthError(
+        check.error || 'Access denied. This account is not authorized for administrator access.'
+      );
+      return;
+    }
+    setUser(signedUser);
+    setIsAdmin(true);
+    setAuthError('');
+    setAuthReady(true);
+  }, []);
+
+  const loginWithEmailPassword = useCallback(
+    async (emailInput: string, passwordInput: string) => {
+      const trimmedEmail = emailInput.trim();
+      if (!trimmedEmail || !passwordInput) {
+        setAuthError('Enter your administrator email and password.');
+        return;
+      }
+
+      setAuthError('');
+      setAuthBusy(true);
+      loginInProgressRef.current = true;
+      try {
+        const result = await signInWithEmailAndPassword(auth, trimmedEmail, passwordInput);
+        await completeSignIn(result.user);
+      } catch (err) {
+        const formatted = formatFirebaseAuthError(err);
+        if (formatted) {
+          setAuthError(formatted);
+        }
+      } finally {
+        loginInProgressRef.current = false;
+        setAuthBusy(false);
+      }
+    },
+    [completeSignIn]
+  );
+
   const loginWithGoogle = useCallback(async () => {
     setAuthError('');
+    setAuthBusy(true);
+    loginInProgressRef.current = true;
     try {
       const result = await signInWithPopup(auth, googleAuthProvider);
-      const signedUser = result.user;
-      const authorized = await verifyServerAdminSession(signedUser);
-      if (!authorized) {
-        await signOut(auth);
-        setIsAdmin(false);
-        setAuthError('Access denied. This account is not authorized for administrator access.');
-      } else {
-        setIsAdmin(true);
-      }
+      await completeSignIn(result.user);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unable to sign in.';
-      if (!message.includes('popup-closed-by-user')) {
-        setAuthError('Authentication failed. Please try again.');
+      const formatted = formatFirebaseAuthError(err);
+      if (formatted) {
+        setAuthError(formatted);
       }
+    } finally {
+      loginInProgressRef.current = false;
+      setAuthBusy(false);
     }
-  }, []);
+  }, [completeSignIn]);
 
   const logoutAdmin = useCallback(async () => {
     setPreviewMode(false);
@@ -317,8 +462,10 @@ export const CmsProvider: React.FC<{children: React.ReactNode}> = ({children}) =
       value={{
         user,
         authReady,
+        authBusy,
         isAdmin,
         authError,
+        loginWithEmailPassword,
         loginWithGoogle,
         logoutAdmin,
         publishedContent,

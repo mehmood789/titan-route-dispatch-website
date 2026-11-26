@@ -1,0 +1,17 @@
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /api/
+Disallow: /carrier-docs/
+Disallow: /data/
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /api/
+Disallow: /carrier-docs/
+Disallow: /data/
+
+Sitemap: https://trdispatch.us/sitemap.xml

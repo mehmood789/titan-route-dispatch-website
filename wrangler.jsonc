@@ -1,0 +1,30 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "titan-route-dispatch",
+  "main": "src/worker.ts",
+  "compatibility_date": "2025-04-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*",
+      "/uploads/*",
+      "/sitemap.xml",
+      "/robots.txt"
+    ]
+  },
+  "vars": {
+    "FIREBASE_PROJECT_ID": "gen-lang-client-0041764067"
+  }
+  // Optional: To persist /api/media/upload and private /api/carrier-docs in Cloudflare R2,
+  // create an R2 bucket in Cloudflare (`npx wrangler r2 bucket create trd-dispatch-storage`)
+  // and uncomment the binding below:
+  // ,
+  // "r2_buckets": [
+  //   {
+  //     "binding": "TRD_BUCKET",
+  //     "bucket_name": "trd-dispatch-storage"
+  //   }
+  // ]
+}
